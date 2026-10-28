@@ -30,6 +30,29 @@ spec:
             }
         }
 
+        
+stage('Use Jenkins Credential') {
+    steps {
+        withCredentials([
+            string(
+                credentialsId: 'lab-api-token',
+                variable: 'API_TOKEN'
+            )
+        ]) {
+            sh '''
+                set +x
+                if [ -n "$API_TOKEN" ]; then
+                    echo "Credential was retrieved successfully."
+                else
+                    echo "Credential is missing."
+                    exit 1
+                fi
+            '''
+        }
+    }
+}
+
+
         stage('Checkout') {
             steps {
                 checkout scm
