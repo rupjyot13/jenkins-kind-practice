@@ -22,7 +22,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                echo 'Building application...'
+                echo 'Building application after a Git change...'
                 sh 'echo "Build completed."'
             }
         }
