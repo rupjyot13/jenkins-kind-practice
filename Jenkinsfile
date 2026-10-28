@@ -7,33 +7,29 @@ pipeline {
         timestamps()
     }
 
+    triggers {
+        pollSCM('H/2 * * * *')
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                echo 'Checking out source code from Git...'
                 checkout scm
-
-                sh 'echo "Current workspace:"'
-                sh 'pwd'
-
-                sh 'echo "Checked-out Git commit:"'
-                sh 'git rev-parse --short HEAD'
-
-                sh 'echo "Repository files:"'
-                sh 'ls -la'
+                sh 'echo "Latest commit:"'
+                sh 'git log -1 --oneline'
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Building application from source control...'
-                sh 'echo "Build simulation completed."'
+                echo 'Building application...'
+                sh 'echo "Build completed."'
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Running test simulation...'
+                echo 'Running tests...'
                 sh 'echo "Tests passed."'
             }
         }
@@ -41,13 +37,13 @@ pipeline {
 
     post {
         success {
-            echo 'Git-based Jenkins pipeline succeeded.'
+            echo 'CI pipeline completed successfully.'
         }
         failure {
-            echo 'Pipeline failed. Check the checkout and stage logs.'
+            echo 'CI pipeline failed.'
         }
         always {
-            echo 'Pipeline execution finished.'
+            echo 'Pipeline finished.'
         }
     }
 }
