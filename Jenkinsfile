@@ -7,43 +7,44 @@ pipeline {
         timestamps()
     }
 
-    triggers {
-        pollSCM('H/2 * * * *')
-    }
-
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
-                sh 'echo "Latest commit:"'
-                sh 'git log -1 --oneline'
+                sh 'ls -la'
+            }
+        }
+
+        stage('Install Test Dependencies') {
+            steps {
+                sh 'python --version'
+                sh 'python -m pip install --no-cache-dir pytest'
+            }
+        }
+
+        stage('Run Unit Tests') {
+            steps {
+                sh 'python -m pytest -v'
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Building application after a Git change...'
-                sh 'echo "Build completed."'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                echo 'Running tests...'
-                sh 'echo "Tests passed."'
+                echo 'Tests passed. Continuing to the build stage.'
+                sh 'echo "Build simulation completed."'
             }
         }
     }
 
     post {
         success {
-            echo 'CI pipeline completed successfully.'
+            echo 'CI pipeline passed.'
         }
         failure {
-            echo 'CI pipeline failed.'
+            echo 'CI pipeline failed. Review the test or build output.'
         }
         always {
-            echo 'Pipeline finished.'
+            echo 'Pipeline execution finished.'
         }
     }
 }
